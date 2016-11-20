@@ -1,0 +1,11 @@
+applications:
+- path: .
+  memory: 256M
+  instances: 1
+  domain: mybluemix.net
+  name: butterfly
+  host: butterfly
+  disk_quota: 1024M
+  services:
+  - ClearDB MySQL Database-8k
+  - availability-monitoring-auto
