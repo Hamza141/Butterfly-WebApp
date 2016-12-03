@@ -1,6 +1,6 @@
 0 info it worked if it ends with ok
 1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'start' ]
-2 info using npm@4.0.2
+2 info using npm@4.0.3
 3 info using node@v7.1.0
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
 5 info lifecycle NodejsStarterApp@0.0.1~prestart: NodejsStarterApp@0.0.1
@@ -27,7 +27,7 @@
 17 error Linux 4.4.0-45-generic
 18 error argv "/usr/bin/nodejs" "/usr/bin/npm" "start"
 19 error node v7.1.0
-20 error npm  v4.0.2
+20 error npm  v4.0.3
 21 error code ELIFECYCLE
 22 error NodejsStarterApp@0.0.1 start: `node app.js`
 22 error Exit status 1
