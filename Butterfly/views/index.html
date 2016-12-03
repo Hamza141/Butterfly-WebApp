@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html ng-app="communityBoard">
+<head>
+    <title>Butterfly</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
+    <script src="javascripts/app.js" type="text/javascript"></script> <!-- not created yet -->
+</head>
+<body>
+<div ng-controller="imagesController">
+    <img ng-src="{{image}}"/>
+</div>
+<div ng-controller="myController">
+    <ul ng-repeat="item in data">
+        <li>Name: {{item.name}}, message: {{item.message}}</li>
+    </ul>
+</div>
+</body>
+</html>
