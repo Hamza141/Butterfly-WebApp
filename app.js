@@ -28,7 +28,7 @@ function handleDisconnect() {
   	});
     connection.on('error', function(err) {
 	    console.log('db error', err);
-	    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+	    if(err.code == 'PROTOCOL_CONNECTION_LOST') {
 	      	handleDisconnect();
 	    } else {
 	      	throw err;
@@ -43,43 +43,76 @@ app.get("/", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
 	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 	response.write('<html><head><title>Chat Box</title></head><body>');
-	response.write('<h1>Name and Message</h1>');
-	response.write('<form enctype="application/x-www-form-urlencoded" action="/formhandler" method="post">');
-	response.write('Name: <input type="text" name="username" value="" /><br />');
-	response.write('Message: <input type="text" name="message" value="" /><br />');
-	response.write('<input type="submit" />');
+	response.write('<h1>Login</h1>');
+	response.write('<form enctype="application/x-www-form-urlencoded" action="/room" method="post">');
+	response.write('Username: <input type="text" name="username" value="" /><br />');
+	response.write('Password: <input type="text" name="password" value="" /><br />');
+	response.write('<input type="submit" /><br />');
+	response.write('<A HREF="register"> Register</A>');
 	response.write('</form></body></html');
 	response.end();
 });
-app.post("/formhandler", function (request, response) {
+app.get("/register", function (request, response) {
+	console.log("[200] " + request.method + " to " + request.url);
+	response.write('<html><head><title>Registration</title></head><body>');
+	response.write('<h1>New Account Registration</h1>');
+	response.write('<form enctype="application/x-www-form-urlencoded" action="/user" method="post">');
+	response.write('Username: <input type="text" name="username" value="" /><br />');
+	response.write('Password: <input type="text" name="password" value="" /><br />');
+	response.write('<input type="submit" /><br />');
+	response.write('<A HREF="/"> Login</A>');
+	response.write('</form></body></html');
+	response.end();
+});
+app.post("/user", function (request, response) {
+	console.log("[200] " + request.method + " to " + request.url);
+	var username = request.body.username;
+	var password = request.body.password;
+	connection.connect(function(err) {
+  		var post  = {userName: username};
+  		var query = connection.query('SELECT * FROM Users WHERE ?', post, function(err, result) {});
+   		console.log(query.sql);
+ 	});
+	connection.connect(function(err) {
+  		var post  = {userName: username, userPassword: password};
+  		var query = connection.query('INSERT INTO Users SET ?', post, function(err, result) {});
+   		console.log(query.sql);
+ 	});
+});
+app.post("/room", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
 	var username = request.body.username;
 	var message = request.body.message;
 	connection.connect(function(err) {
-  		console.log('connected to local');
   		var post  = {username: username, message: message};
   		var query = connection.query('INSERT INTO Messages SET ?', post, function(err, result) {});
    		console.log(query.sql);
  	});
 	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 	response.write('<html><head><title>Chat Box</title></head><body>');
-	response.write('<h1>Name and Message</h1>');
-	response.write('<p>message</p>');
 	connection.connect(function(err) {
-  		console.log('connected to local');
   		var query = connection.query('SELECT * FROM Messages', function(err, result) {
-			//console.log(result);
+			var length = 0;
+			for (var h = 0; h < result.length; h++) {
+				if (result[h].username.length > length) {
+					length = result[h].username.length;
+				}
+			}
+			response.write('<style>div {border: 1px solid black; background-color: lightblue;}</style>');
+			response.write('<div id="chat" style="overflow-y: scroll; height:90%;"><div>');
 			for (var i = 0; i < result.length; i++) {
-  				//console.log(result[i].message);
-				response.write(result[i].message);
-				response.write('<br/>');
+				var reLength = result[i].username.length;
+				response.write(result[i].username + ": " + result[i].message);
+				response.write("<br/>");
 			};
-			response.write('</body></html');
+			response.write('</div></body>');
 			response.end();
 		});
-   		console.log(query.sql);
+		response.write('<form enctype="application/x-www-form-urlencoded" action="/room" method="post">');
+		response.write('Name: <input type="text" name="username" value="" /><br />');
+		response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
+		response.write('<input type="submit" /></html>');
  	});
-
 });
 http.createServer(app).listen(app.get('port'), '0.0.0.0', function() {
 	console.log('Express server listening on port ' + app.get('port'));
