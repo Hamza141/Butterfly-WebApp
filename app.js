@@ -68,15 +68,18 @@ app.post("/formhandler", function (request, response) {
 	connection.connect(function(err) {
   		console.log('connected to local');
   		var query = connection.query('SELECT * FROM Messages', function(err, result) {
-			console.log(result);
+			//console.log(result);
 			for (var i = 0; i < result.length; i++) {
-  				console.log(result[i].message);
+  				//console.log(result[i].message);
+				response.write(result[i].message);
+				response.write('<br/>');
 			};
+			response.write('</body></html');
+			response.end();
 		});
    		console.log(query.sql);
  	});
-	response.write('</body></html');
-	response.end();
+
 });
 http.createServer(app).listen(app.get('port'), '0.0.0.0', function() {
 	console.log('Express server listening on port ' + app.get('port'));
