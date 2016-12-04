@@ -12,3 +12,7 @@ app.controller('myController', function($scope, $http) {
 app.controller('imagesController', function($scope) {
     $scope.image = '../images/logo.png';
 });
+
+app.controller('loginController', function() {
+
+});
