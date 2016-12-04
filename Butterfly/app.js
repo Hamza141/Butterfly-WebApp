@@ -4,11 +4,21 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mysql = require('mysql');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+var db_config = {
+    host     : 'us-cdbr-iron-east-04.cleardb.net',
+    user     : 'b3bd94cf7c5125',
+    password : 'b256d9ed',
+    database : 'ad_9ddc31f035745cd'
+};
+
+var connection = mysql.createConnection(db_config);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -43,4 +53,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.post("/validateLogin", function(request, response) {
+    var username = request.username;
+    var password = request.password;
+    connection.connect(function(err) {
+        console.log('success');
+    });
+});
 module.exports = app;
