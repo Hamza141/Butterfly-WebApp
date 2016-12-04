@@ -1,0 +1,25 @@
+doctype html
+html
+	head
+		title= title
+	body
+		h1 New Account Registration
+		form(name="input", action="/registerUser", method="post")
+			| First Name:
+			input(type="text", name="firstName")
+			br
+			| Last Name:
+			input(type="text", name="lastName")
+			br
+			| Username:
+			input(type="text", name="userName")
+			br
+			| Password:
+			input(type="password", name="userPassword")
+			br
+			input(type="submit", value="Register New Account")
+		button(onclick="move()") Login
+script.
+	function move() {
+		window.location.href = '/'
+	}
