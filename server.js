@@ -61,17 +61,20 @@ app.post("/validateLogin", function (request, response) {
 	var googleID = request.body.googleID;
 	var password = request.body.userPassword;
 	console.log(googleID + " " + password);
-	connection.connect(function(err) {
-  		var post  = {googleID: googleID};
-  		var query = connection.query('SELECT * FROM WebUsers WHERE ?', post, function(err, result) {
-			if (googleID === result[0].googleID && password === result[0].userPassword) {
-				console.log('redirect');
-				user = googleID;
-				response.redirect('/listCommunities');
-			}
-		});
-		//console.log(query.sql);
- 	});
+	if (googleID !== "" && password !== "") {
+		connection.connect(function(err) {
+	  		var post  = {googleID: googleID};
+	  		var query = connection.query('SELECT * FROM WebUsers WHERE ?', post, function(err, result) {
+				if (googleID === result[0].googleID && password === result[0].userPassword) {
+					console.log('redirect');
+					user = googleID;
+					response.redirect('/listCommunities');
+				}
+			});
+			//console.log(query.sql);
+	 	});
+	}
+
 });
 app.post("/registerUser", function (request, response) {
 	//console.log("[200] " + request.method + " to " + request.url);

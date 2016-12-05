@@ -1,7 +1,7 @@
 extends ../node_modules/jade-bootstrap/_bootstrap.jade
 append body
 	.container
-	img(src= "https://i.imgur.com/7P7l7Vw.png")
+		img(src= "https://i.imgur.com/7P7l7Vw.png")
 		title= title
 		h1 New Account Registration
 		form(name="input", action="/validateCommunity", method="post")
@@ -16,7 +16,7 @@ append body
 			p Private:
 			input(type="text", name="private")
 			p
-			a.btn.btn-default(type="submit", value="Create New Community") Create New Community
+			input(type="submit", value="Create New Community")
 			p
 		a.btn.btn-info(onclick="move()") Back
 	script.
