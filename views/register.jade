@@ -1,25 +1,22 @@
-doctype html
-html
-	head
+extends ../node_modules/jade-bootstrap/_bootstrap.jade
+append body
+	.container
 		title= title
-	body
 		h1 New Account Registration
 		form(name="input", action="/registerUser", method="post")
-			| First Name:
+			p First Name:
 			input(type="text", name="firstName")
-			br
-			| Last Name:
+			p Last Name:
 			input(type="text", name="lastName")
-			br
-			| Username:
+			p Username:
 			input(type="text", name="userName")
-			br
-			| Password:
+			p Password:
 			input(type="password", name="userPassword")
-			br
+			p
 			input(type="submit", value="Register New Account")
+			p
 		button(onclick="move()") Login
-script.
-	function move() {
-		window.location.href = '/'
-	}
+	script.
+		function move() {
+			window.location.href = '/'
+		}
