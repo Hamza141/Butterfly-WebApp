@@ -2,18 +2,72 @@
 <html ng-app="communityBoard">
 <head>
     <title>Butterfly</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
     <script src="javascripts/app.js" type="text/javascript"></script> <!-- not created yet -->
-    <link rel="stylesheet" type="text/css" href="../public/stylesheets/styles.css">
 </head>
-<body>
+<body ng-controller="mainController as main">
 <div ng-controller="imagesController">
     <img ng-src="{{image}}"/>
 </div>
-<div ng-controller="myController">
+<div ng-show="main.loggedIn" ng-controller="myController">
     <ul ng-repeat="item in data">
-        <li>Name: {{item.name}}, message: {{item.message}}</li>
+        <li>
+            <h6>{{item.name}}: {{item.message}}</h6>
+        </li>
     </ul>
+</div>
+<form ng-hide="main.loggedIn" ng-show="!main.register" class="form-inline">
+    <div class="form-group">
+        <label class="sr-only">Email address</label>
+        <input ng-model="main.email" type="email" class="form-control" placeholder="Email">
+    </div>
+    <br>
+    <div class="form-group">
+        <label class="sr-only">Password</label>
+        <input ng-model="main.password" type="password" class="form-control" placeholder="Password">
+    </div>
+    <br>
+    <div ng-show="main.loginFailed">
+        The email and password do not match
+    </div>
+    <input type="submit" class="btn btn-default" value="Sign In" ng-click="main.checkLogin()">
+    <button type="button" class="btn btn-default" ng-click="main.createAccount()">Register</button>
+</form>
+<form name="registerForm" ng-show="main.register" class="form-inline" ng-submit="registerForm.$valid && main.accountCreated()">
+    <fieldset class="form-group">
+        <input type="email" class="form-control" placeholder="Email" required>
+    </fieldset>
+    <br>
+    <fieldset class="form-group">
+        <input ng-model="main.firstName" type="text" class="form-control" placeholder="First Name" required>
+    </fieldset>
+    <br>
+    <fieldset class="form-group">
+        <input ng-model="main.lastName" type="text" class="form-control" placeholder="Last Name" required>
+    </fieldset>
+    <br>
+    <fieldset class="form-group">
+        <input type="password" class="form-control" placeholder="Password" required>
+    </fieldset>
+    <br>
+    <button type="button" class="btn btn-default" ng-click="main.cancelAccountCreate()">Back</button>
+    <input type="submit" class="btn btn-default">
+</form>
+<div class="col-md-5" ng-show="main.loggedIn">
+    <textarea class="form-control" rows="4">
+    </textarea>
+    <br>
+    <input type="submit" class="btn btn-default" ng-click="main.sendMessage()">
+    <button type="button" class="btn btn-default" ng-click="main.cancelAccountCreate()">Log Out</button>
 </div>
 </body>
 </html>
