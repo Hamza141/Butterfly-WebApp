@@ -77,7 +77,7 @@ app.post("/registerUser", function (request, response) {
 	//console.log("[200] " + request.method + " to " + request.url);
 	var firstName = request.body.firstName;
 	var lastName = request.body.lastName;
-	var username = request.body.userName;
+	var googleID = request.body.googleID;
 	var password = request.body.userPassword;
 	connection.connect(function(err) {
   		var post  = {userName: username};
@@ -85,7 +85,7 @@ app.post("/registerUser", function (request, response) {
 			//console.log(result);
 			if (result == "") {
 				connection.connect(function(err) {
-					var post  = {firstName: firstName, lastName: lastName, userName: username, userPassword: password};
+					var post  = {firstName: firstName, lastName: lastName, googleID: googleID, userPassword: password};
 					var query = connection.query('INSERT INTO WebUsers SET ?', post, function(err, result) {});
 					//console.log(query.sql);
 				});
@@ -106,7 +106,9 @@ app.get("/listCommunities", function (request, response) {
 		if (err) throw err;
 		else {
 			var communities = result;
-			response.render('communities', {communities : communities});
+			response.render('communities', {
+				title: 'Communities List',
+				communities : communities});
 		}
 	});
 });

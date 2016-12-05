@@ -5,15 +5,17 @@ append body
 		h1= title
 		p Welcome to Butterfly
 		form(method="POST", action="/validateLogin")
-			p Email
+			p Email:
 			input(type="email", name="googleID")
-			p Password
+			p
+			p Password:
+			p
 			input(type="password", name="userPassword")
 			p
-			input(type="submit", value="Login")
+			a.btn.btn-primary(type="submit", value="Login") Login
 			p
-		button(onclick="move()") Register
-	script.
-		function move() {
-			window.location.href = '/register'
-		}
+		a.btn.btn-success(href= '/register') Register
+		script.
+			function move() {
+				window.location.
+			}
