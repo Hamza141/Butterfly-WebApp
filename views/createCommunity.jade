@@ -1,28 +1,25 @@
-doctype html
-html
-	head
+extends ../node_modules/jade-bootstrap/_bootstrap.jade
+append body
+	.container
+	img(src= "https://i.imgur.com/7P7l7Vw.png")
 		title= title
-	body
 		h1 New Account Registration
 		form(name="input", action="/validateCommunity", method="post")
-			| Name:
+			p Name:
 			input(type="text", name="communityName")
-			br
-			| Category:
+			p Category:
 			input(type="text", name="category")
-			br
-			| Sub-category:
+			p Sub-category:
 			input(type="text", name="subcategory")
-			br
-			| Description:
+			p Description:
 			input(type="text", name="description")
-			br
-			| Private:
+			p Private:
 			input(type="text", name="private")
-			br
-			input(type="submit", value="Create New Community")
-		button(onclick="move()") Back
-script.
-	function move() {
-		window.location.href = '/listCommunities'
-	}
+			p
+			a.btn.btn-default(type="submit", value="Create New Community") Create New Community
+			p
+		a.btn.btn-info(onclick="move()") Back
+	script.
+		function move() {
+			window.location.href = '/listCommunities'
+		}

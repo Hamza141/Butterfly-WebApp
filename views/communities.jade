@@ -1,17 +1,20 @@
-block content
-	title Communities List
-	h1 List of Communities
-	div.container
-		div.content
-			- if (typeof(communities) !== 'undefined')
-			ul
-				- each community in communities
-					a(href='/room/'+community.name)
-						button(type="button")= community.name
-					br
-	div.footer
-	button(onclick="move()") Create New Community
-script.
-	function move() {
-		window.location.href = '/createCommunity'
-	}
+extends ../node_modules/jade-bootstrap/_bootstrap.jade
+append body
+	.contains
+		title= title
+		h1 List of Communities
+		a.btn.btn-info(onclick="move()") Create New Community
+		p
+		script.
+			function move() {
+				window.location.href = '/createCommunity'
+			}
+		div.container
+			div.content
+				- if (typeof(communities) !== 'undefined')
+				ul
+					- each community in communities
+						a.btn.btn-primary(href='/room/'+community.name)= community.name
+						p
+			div.footer
+		div.footer

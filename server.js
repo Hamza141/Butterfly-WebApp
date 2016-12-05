@@ -44,22 +44,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-router.use(function (req,res,next) {
-  console.log("/" + req.method);
-  next();
-});
-router.get("/",function(req,response){
+app.get("/", function (request, response) {
+	console.log("[200] " + request.method + " to " + request.url);
 	response.render('loginPage', {
-    	title: 'Home'
+    	title: 'Login'
   	});
 });
-/*app.get("/", function (request, response) {
-	//console.log("[200] " + request.method + " to " + request.url);
-	response.render('loginPage', {
-    	title: 'Home'
-  	});
-});*/
-app.use("/",router);
 app.get("/register", function (request, response) {
 	//console.log("[200] " + request.method + " to " + request.url);
 	response.render('register', {
@@ -67,9 +57,10 @@ app.get("/register", function (request, response) {
   	});
 });
 app.post("/validateLogin", function (request, response) {
-	//console.log("[200] " + request.method + " to " + request.url);
+	console.log("[200] " + request.method + " to " + request.url);
 	var googleID = request.body.googleID;
-	var password = request.body.password;
+	var password = request.body.userPassword;
+	console.log(googleID + " " + password);
 	connection.connect(function(err) {
   		var post  = {googleID: googleID};
   		var query = connection.query('SELECT * FROM WebUsers WHERE ?', post, function(err, result) {
@@ -86,7 +77,7 @@ app.post("/registerUser", function (request, response) {
 	//console.log("[200] " + request.method + " to " + request.url);
 	var firstName = request.body.firstName;
 	var lastName = request.body.lastName;
-	var username = request.body.userName;
+	var googleID = request.body.googleID;
 	var password = request.body.userPassword;
 	connection.connect(function(err) {
   		var post  = {userName: username};
@@ -94,7 +85,7 @@ app.post("/registerUser", function (request, response) {
 			//console.log(result);
 			if (result == "") {
 				connection.connect(function(err) {
-					var post  = {firstName: firstName, lastName: lastName, userName: username, userPassword: password};
+					var post  = {firstName: firstName, lastName: lastName, googleID: googleID, userPassword: password};
 					var query = connection.query('INSERT INTO WebUsers SET ?', post, function(err, result) {});
 					//console.log(query.sql);
 				});
@@ -115,7 +106,9 @@ app.get("/listCommunities", function (request, response) {
 		if (err) throw err;
 		else {
 			var communities = result;
-			response.render('communities', {communities : communities});
+			response.render('communities', {
+				title: 'Communities List',
+				communities : communities});
 		}
 	});
 });
@@ -148,6 +141,8 @@ app.get("/room/:community", function (request, response) {
 	response.write('<html><head><title>Chat Box</title></head><body>');
 	connection.connect(function(err) {
 		var communityName = request.params.community.replace(/ /g, "_");
+		var room = "/room/";
+		room += communityName;
 		communityName += "_Board";
   		var query = connection.query('SELECT * FROM ' + communityName, function(err, result) {
 			if (err) throw err;
@@ -162,11 +157,8 @@ app.get("/room/:community", function (request, response) {
 				response.end();
 			}
 		});
-		var room = "/room/";
-		room += request.params.community;
 		console.log("room is " + room);
-
-		response.write('<form enctype="application/x-www-form-urlencoded" action='+room+' method="post">');
+		response.write('<form enctype="application/x-www-form-urlencoded" action="'+room+'" method="post">');
 		response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
 		response.write('<input type="submit" /></html>');
  	});
@@ -174,6 +166,8 @@ app.get("/room/:community", function (request, response) {
 app.post("/room/:community", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
 	var communityName = request.params.community.replace(/ /g, "_");
+	var room = "/room/";
+	room += communityName;
 	communityName += "_Board";
 	var message = request.body.message;
 	connection.connect(function(err) {
@@ -195,8 +189,7 @@ app.post("/room/:community", function (request, response) {
 			response.end();
 		});
 		console.log(query.sql);
-		var room = "/room/";
-		room += request.params.community;
+		console.log("post room is " + room);
 		response.write('<form enctype="application/x-www-form-urlencoded" action='+room+' method="post">');
 		response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
 		response.write('<input type="submit" /></html>');
