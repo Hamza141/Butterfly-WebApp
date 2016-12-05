@@ -5,19 +5,20 @@ var querystring = require('querystring');
 var utils = require('utils');
 var mysql = require('mysql');
 var path = require('path');
+var router = express.Router();
 var app = express();
-var db_config = {
+/*var db_config = {
 	host     : 'localhost',
 	user     : 'root',
 	password : 'Ghost999',
 	database : 'Butterfly'
-};
-/*var db_config = {
+};*/
+var db_config = {
 	host     : 'us-cdbr-iron-east-04.cleardb.net',
 	user     : 'b3bd94cf7c5125',
 	password : 'b256d9ed',
 	database : 'ad_9ddc31f035745cd'
-};*/
+};
 var connection = mysql.createConnection(db_config);
 /*function handleDisconnect() {
   	connection = mysql.createConnection(db_config);
@@ -43,36 +44,46 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.get("/", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
+router.use(function (req,res,next) {
+  console.log("/" + req.method);
+  next();
+});
+router.get("/",function(req,response){
 	response.render('loginPage', {
     	title: 'Home'
   	});
 });
+/*app.get("/", function (request, response) {
+	//console.log("[200] " + request.method + " to " + request.url);
+	response.render('loginPage', {
+    	title: 'Home'
+  	});
+});*/
+app.use("/",router);
 app.get("/register", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
+	//console.log("[200] " + request.method + " to " + request.url);
 	response.render('register', {
     	title: 'register'
   	});
 });
 app.post("/validateLogin", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
-	var username = request.body.username;
+	//console.log("[200] " + request.method + " to " + request.url);
+	var googleID = request.body.googleID;
 	var password = request.body.password;
 	connection.connect(function(err) {
-  		var post  = {userName: username};
+  		var post  = {googleID: googleID};
   		var query = connection.query('SELECT * FROM WebUsers WHERE ?', post, function(err, result) {
-			if (username === result[0].userName && password === result[0].userPassword) {
+			if (googleID === result[0].googleID && password === result[0].userPassword) {
 				console.log('redirect');
-				user = username;
+				user = googleID;
 				response.redirect('/listCommunities');
 			}
 		});
-		console.log(query.sql);
+		//console.log(query.sql);
  	});
 });
 app.post("/registerUser", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
+	//console.log("[200] " + request.method + " to " + request.url);
 	var firstName = request.body.firstName;
 	var lastName = request.body.lastName;
 	var username = request.body.userName;
@@ -80,12 +91,12 @@ app.post("/registerUser", function (request, response) {
 	connection.connect(function(err) {
   		var post  = {userName: username};
   		var query = connection.query('SELECT * FROM WebUsers WHERE ?', post, function(err, result) {
-			console.log(result);
+			//console.log(result);
 			if (result == "") {
 				connection.connect(function(err) {
 					var post  = {firstName: firstName, lastName: lastName, userName: username, userPassword: password};
 					var query = connection.query('INSERT INTO WebUsers SET ?', post, function(err, result) {});
-					console.log(query.sql);
+					//console.log(query.sql);
 				});
 			} else {
 				response.render('loginPage', {
@@ -93,12 +104,12 @@ app.post("/registerUser", function (request, response) {
 			  	});
 			}
 		});
-   		console.log(query.sql);
+   		//console.log(query.sql);
  	});
 	response.redirect('/room');
 });
 app.get("/listCommunities", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
+	//console.log("[200] " + request.method + " to " + request.url);
 	var query = connection.query('SELECT * FROM Communities', function(err, result) {
 		//connection.end();
 		if (err) throw err;
@@ -109,17 +120,70 @@ app.get("/listCommunities", function (request, response) {
 	});
 });
 app.get("/createCommunity", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
+	//console.log("[200] " + request.method + " to " + request.url);
+	response.render('createCommunity', {
+    	title: 'Create Community'
+  	});
 });
 app.post("/validateCommunity", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
+	//console.log("[200] " + request.method + " to " + request.url);
+	var category = request.body.category;
+	var subcategory = request.body.subcategory;
+	var description = request.body.description;
+	var communityName = request.body.communityName;
+	var post = {category: category, subcategory: subcategory, description: description, name: communityName};
+	connection.connect(function(err) {
+  		var query = connection.query('INSERT INTO communities SET ?', post, function(err, result) {});
+	});
+	connection.connect(function(err) {
+		var tableDef = 'CREATE TABLE ' + communityName.replace(/ /g, "_") + '_Board (idMessage INT(4) AUTO_INCREMENT NOT NULL PRIMARY KEY, pinned INT(4), name VARCHAR(255), date DATE, message TEXT CHARACTER SET latin1 COLLATE latin1_general_cs)'
+  		var query = connection.query(tableDef, function(err, result) {});
+	});
+	console.log(communityName);
+	response.redirect('/room/' + communityName);
 });
 app.get("/room/:community", function (request, response) {
+	console.log("[200] " + request.method + " to " + request.url);
 	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 	response.write('<html><head><title>Chat Box</title></head><body>');
 	connection.connect(function(err) {
 		var communityName = request.params.community.replace(/ /g, "_");
 		communityName += "_Board";
+  		var query = connection.query('SELECT * FROM ' + communityName, function(err, result) {
+			if (err) throw err;
+			else {
+				response.write('<style>div {border: 1px solid black; background-color: lightblue;}</style>');
+				response.write('<div id="chat" style="overflow-y: scroll; height:90%;"><div>');
+				for (var i = 0; i < result.length; i++) {
+					response.write(result[i].name + ": " + result[i].message);
+					response.write("<br/>");
+				};
+				response.write('</div></body>');
+				response.end();
+			}
+		});
+		var room = "/room/";
+		room += request.params.community;
+		console.log("room is " + room);
+
+		response.write('<form enctype="application/x-www-form-urlencoded" action='+room+' method="post">');
+		response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
+		response.write('<input type="submit" /></html>');
+ 	});
+});
+app.post("/room/:community", function (request, response) {
+	console.log("[200] " + request.method + " to " + request.url);
+	var communityName = request.params.community.replace(/ /g, "_");
+	communityName += "_Board";
+	var message = request.body.message;
+	connection.connect(function(err) {
+  		var post  = {name: user, message: message};
+  		var query = connection.query('INSERT INTO ' + communityName + ' SET ?', post, function(err, result) {});
+   		console.log(query.sql);
+ 	});
+	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+	response.write('<html><head><title>Chat Box</title></head><body>');
+	connection.connect(function(err) {
   		var query = connection.query('SELECT * FROM ' + communityName, function(err, result) {
 			response.write('<style>div {border: 1px solid black; background-color: lightblue;}</style>');
 			response.write('<div id="chat" style="overflow-y: scroll; height:90%;"><div>');
@@ -130,39 +194,14 @@ app.get("/room/:community", function (request, response) {
 			response.write('</div></body>');
 			response.end();
 		});
-		response.write('<form enctype="application/x-www-form-urlencoded" action="/room" method="post">');
-		response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
-		response.write('<input type="submit" /></html>');
- 	});
-});
-app.post("/room/:community", function (request, response) {
-	console.log("[200] " + request.method + " to " + request.url);
-	var message = request.body.message;
-	connection.connect(function(err) {
-  		var post  = {name: user, message: message};
-  		var query = connection.query('INSERT INTO ? SET ?', post, function(err, result) {});
-   		console.log(query.sql);
- 	});
-	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
-	response.write('<html><head><title>Chat Box</title></head><body>');
-	connection.connect(function(err) {
-		var communityName = request.params.community.replace(/ /g, "_");
-		communityName += "_Board";
-  		var query = connection.query('SELECT * FROM ' + communityName, post, function(err, result) {
-			response.write('<style>div {border: 1px solid black; background-color: lightblue;}</style>');
-			response.write('<div id="chat" style="overflow-y: scroll; height:90%;"><div>');
-			for (var i = 0; i < result.length; i++) {
-				response.write(result[i].name + ": " + result[i].message);
-				response.write("<br/>");
-			};
-			response.write('</div></body>');
-			response.end();
-		});
-		response.write('<form enctype="application/x-www-form-urlencoded" action="/room" method="post">');
+		console.log(query.sql);
+		var room = "/room/";
+		room += request.params.community;
+		response.write('<form enctype="application/x-www-form-urlencoded" action='+room+' method="post">');
 		response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
 		response.write('<input type="submit" /></html>');
  	});
 });
 http.createServer(app).listen(app.get('port'), '0.0.0.0', function() {
-	console.log('Express server listening on port ' + app.get('port'));
+	//console.log('Express server listening on port ' + app.get('port'));
 });

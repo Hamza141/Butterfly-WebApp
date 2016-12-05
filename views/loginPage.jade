@@ -2,16 +2,21 @@ doctype html
 html
 	head
 		title= title
+		link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.min.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+		script(src='/bootstrap/js/bootstrap.min.js')
 	body
 		h1 Login
-		form(name="input", action="/validateLogin", method="post")
-			| Username:
-			input(type="text", name="username")
+		form(name="input", action="/validateLogin", method="post", class="form-inline")
+			| Email Address:
+			input(type="text", name="googleID", class="form-control")
 			br
 			| Password:
-			input(type="password", name="password")
+			input(type="password", name="password", class="form-control")
 			br
-			input(type="submit", value="Login")
+			input(type="submit", value="Login", btn btn-default)
 		button(onclick="move()") Register
 script.
 	function move() {

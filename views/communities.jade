@@ -10,3 +10,8 @@ block content
 						button(type="button")= community.name
 					br
 	div.footer
+	button(onclick="move()") Create New Community
+script.
+	function move() {
+		window.location.href = '/createCommunity'
+	}

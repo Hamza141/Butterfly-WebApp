@@ -1,0 +1,28 @@
+doctype html
+html
+	head
+		title= title
+	body
+		h1 New Account Registration
+		form(name="input", action="/validateCommunity", method="post")
+			| Name:
+			input(type="text", name="communityName")
+			br
+			| Category:
+			input(type="text", name="category")
+			br
+			| Sub-category:
+			input(type="text", name="subcategory")
+			br
+			| Description:
+			input(type="text", name="description")
+			br
+			| Private:
+			input(type="text", name="private")
+			br
+			input(type="submit", value="Create New Community")
+		button(onclick="move()") Back
+script.
+	function move() {
+		window.location.href = '/listCommunities'
+	}

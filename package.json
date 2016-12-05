@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
+    "bootstrap": "^3.3.7",
     "cfenv": "1.0.x",
     "express": "4.13.x",
     "express-json": "^1.0.0",
