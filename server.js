@@ -65,7 +65,7 @@ app.post("/validateLogin", function (request, response) {
 			if (username === result[0].userName && password === result[0].userPassword) {
 				console.log('redirect');
 				user = username;
-				response.redirect('/room');
+				response.redirect('/listCommunities');
 			}
 		});
 		console.log(query.sql);
@@ -99,6 +99,14 @@ app.post("/registerUser", function (request, response) {
 });
 app.get("/listCommunities", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
+	var query = connection.query('SELECT * FROM Communities', function(err, result) {
+		//connection.end();
+		if (err) throw err;
+		else {
+			var communities = result;
+			response.render('communities', {communities : communities});
+		}
+	});
 });
 app.get("/createCommunity", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
@@ -106,11 +114,13 @@ app.get("/createCommunity", function (request, response) {
 app.post("/validateCommunity", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
 });
-app.get("/room", function (request, response) {
+app.get("/room/:community", function (request, response) {
 	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 	response.write('<html><head><title>Chat Box</title></head><body>');
 	connection.connect(function(err) {
-  		var query = connection.query('SELECT * FROM Chess_team_Board', function(err, result) {
+		var communityName = request.params.community.replace(/ /g, "_");
+		communityName += "_Board";
+  		var query = connection.query('SELECT * FROM ' + communityName, function(err, result) {
 			response.write('<style>div {border: 1px solid black; background-color: lightblue;}</style>');
 			response.write('<div id="chat" style="overflow-y: scroll; height:90%;"><div>');
 			for (var i = 0; i < result.length; i++) {
@@ -125,18 +135,20 @@ app.get("/room", function (request, response) {
 		response.write('<input type="submit" /></html>');
  	});
 });
-app.post("/room", function (request, response) {
+app.post("/room/:community", function (request, response) {
 	console.log("[200] " + request.method + " to " + request.url);
 	var message = request.body.message;
 	connection.connect(function(err) {
   		var post  = {name: user, message: message};
-  		var query = connection.query('INSERT INTO Chess_team_Board SET ?', post, function(err, result) {});
+  		var query = connection.query('INSERT INTO ? SET ?', post, function(err, result) {});
    		console.log(query.sql);
  	});
 	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 	response.write('<html><head><title>Chat Box</title></head><body>');
 	connection.connect(function(err) {
-  		var query = connection.query('SELECT * FROM Chess_team_Board', function(err, result) {
+		var communityName = request.params.community.replace(/ /g, "_");
+		communityName += "_Board";
+  		var query = connection.query('SELECT * FROM ' + communityName, post, function(err, result) {
 			response.write('<style>div {border: 1px solid black; background-color: lightblue;}</style>');
 			response.write('<div id="chat" style="overflow-y: scroll; height:90%;"><div>');
 			for (var i = 0; i < result.length; i++) {
