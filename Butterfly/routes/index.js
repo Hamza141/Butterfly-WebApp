@@ -157,6 +157,7 @@ router.get("/room/:community", function (request, response) {
         //console.log("room is " + room);
         response.write('<form enctype="application/x-www-form-urlencoded" action="'+room+'" method="post">');
         response.write('Message: <input type="text" name="message" value="" style="width:100%;" /><br />');
+        response.write('<a class="btn btn-primary" href="/" role="button">Log Out</a>');
         response.write('<input type="submit" /></html>');
     });
 });

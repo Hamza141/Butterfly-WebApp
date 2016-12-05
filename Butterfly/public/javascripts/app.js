@@ -1,7 +1,7 @@
 var app = angular.module('communityBoard',[]);
 
 app.controller('mainController', function($scope, $http) {
-    $scope.loggedIn = false;
+    $scope.loggedIn;
     $scope.registerMain = false;
     $scope.registerFailed = false;
     $scope.loginFailed = false;
