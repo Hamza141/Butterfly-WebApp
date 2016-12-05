@@ -105,11 +105,11 @@ app.get("/listCommunities", function (request, response) {
 		//connection.end();
 		if (err) throw err;
 		else {
-			var communities = result;
-			response.render('communities', {
-				title: 'Communities List',
-				communities : communities});
-		}
+            var communities = result;
+            response.render('communities', {
+                title: 'Communities List',
+                communities : communities});
+        }
 	});
 });
 app.get("/createCommunity", function (request, response) {
