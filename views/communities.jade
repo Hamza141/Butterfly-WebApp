@@ -1,0 +1,12 @@
+block content
+	title Communities List
+	h1 List of Communities
+	div.container
+		div.content
+			- if (typeof(communities) !== 'undefined')
+			ul
+				- each community in communities
+					a(href='/room/'+community.name)
+						button(type="button")= community.name
+					br
+	div.footer
