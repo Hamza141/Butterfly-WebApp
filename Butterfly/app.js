@@ -53,11 +53,32 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.post("/validateLogin", function(request, response) {
-    var username = request.username;
-    var password = request.password;
+
+app.post("/registerUser", function (request, response) {
+    console.log("[200] " + request.method + " to " + request.url);
+    var firstName = request.body.firstName;
+    var lastName = request.body.lastName;
+    var username = request.body.userName;
+    var password = request.body.userPassword;
     connection.connect(function(err) {
-        console.log('success');
+        var post  = {userName: username};
+        var query = connection.query('SELECT * FROM WebUsers WHERE ?', post, function(err, result) {
+            console.log(result);
+            if (result == "") {
+                connection.connect(function(err) {
+                    var post  = {firstName: firstName, lastName: lastName, userName: username, userPassword: password};
+                    var query = connection.query('INSERT INTO WebUsers SET ?', post, function(err, result) {});
+                    console.log(query.sql);
+                });
+            } else {
+                response.render('loginPage', {
+                    title: 'Home'
+                });
+            }
+        });
+        console.log(query.sql);
     });
+    response.redirect('/room');
 });
+
 module.exports = app;

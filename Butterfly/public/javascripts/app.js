@@ -1,11 +1,25 @@
 var app = angular.module('communityBoard',[]);
 
-app.controller('mainController', function() {
+app.controller('mainController', function($http) {
     this.loggedIn = false;
     this.register = false;
-    this.userName = "";
+    this.loginFailed = false;
+    this.firstName = "";
+    this.lastName = "";
+    this.email = "";
+    this.password = "";
     this.checkLogin = function() {
-        this.loggedIn = true;
+        var request = $http({
+            method: 'POST',
+            url: "/validateLogin",
+            data: {
+                email: this.email,
+                password: this.password
+            }
+        });
+        request.success(function () {
+           this.loggedIn = true;
+        });
     };
 
     this.sendMessage  = function() {

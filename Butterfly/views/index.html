@@ -28,14 +28,17 @@
 <form ng-hide="main.loggedIn" ng-show="!main.register" class="form-inline">
     <div class="form-group">
         <label class="sr-only">Email address</label>
-        <input type="email" class="form-control" placeholder="Email">
+        <input ng-model="main.email" type="email" class="form-control" placeholder="Email">
     </div>
     <br>
     <div class="form-group">
         <label class="sr-only">Password</label>
-        <input type="password" class="form-control" placeholder="Password">
+        <input ng-model="main.password" type="password" class="form-control" placeholder="Password">
     </div>
     <br>
+    <div ng-show="main.loginFailed">
+        The email and password do not match
+    </div>
     <input type="submit" class="btn btn-default" value="Sign In" ng-click="main.checkLogin()">
     <button type="button" class="btn btn-default" ng-click="main.createAccount()">Register</button>
 </form>
@@ -45,7 +48,11 @@
     </fieldset>
     <br>
     <fieldset class="form-group">
-        <input ng-model="main.userName" type="text" class="form-control" placeholder="Name" required>
+        <input ng-model="main.firstName" type="text" class="form-control" placeholder="First Name" required>
+    </fieldset>
+    <br>
+    <fieldset class="form-group">
+        <input ng-model="main.lastName" type="text" class="form-control" placeholder="Last Name" required>
     </fieldset>
     <br>
     <fieldset class="form-group">
