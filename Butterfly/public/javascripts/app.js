@@ -1,24 +1,33 @@
 var app = angular.module('communityBoard',[]);
 
-app.controller('mainController', function($http) {
-    this.loggedIn = false;
+app.controller('mainController', function($scope, $http) {
+    $scope.loggedIn = false;
     this.register = false;
-    this.loginFailed = false;
+    $scope.loginFailed = false;
     this.firstName = "";
     this.lastName = "";
-    this.email = "";
+    this.googleID = "";
     this.password = "";
+    $scope.result = "";
     this.checkLogin = function() {
         var request = $http({
-            method: 'POST',
+            method: 'GET',
             url: "/validateLogin",
-            data: {
-                email: this.email,
+            params: {
+                googleID: this.googleID,
                 password: this.password
             }
         });
-        request.success(function () {
-           this.loggedIn = true;
+        console.log(request);
+        request.success(function (results) {
+            if (results === "success") {
+                $scope.loggedIn = true;
+                $scope.loginFailed = false;
+                console.log($scope.loggedIn);
+            }
+            else if (results === "failed") {
+                $scope.loginFailed = true;
+            }
         });
     };
 
@@ -32,12 +41,12 @@ app.controller('mainController', function($http) {
 
     this.accountCreated = function () {
         this.register = false;
-        this.loggedIn = true;
+        $scope.loggedIn = true;
     };
 
     this.cancelAccountCreate = function () {
         this.register = false;
-        this.loggedIn = false;
+        $scope.loggedIn = false;
     };
 
 });

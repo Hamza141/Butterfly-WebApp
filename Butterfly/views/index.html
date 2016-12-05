@@ -18,17 +18,17 @@
 <div ng-controller="imagesController">
     <img ng-src="{{image}}"/>
 </div>
-<div ng-show="main.loggedIn" ng-controller="myController">
+<div ng-show="loggedIn" ng-controller="myController">
     <ul ng-repeat="item in data">
         <li>
             <h6>{{item.name}}: {{item.message}}</h6>
         </li>
     </ul>
 </div>
-<form ng-hide="main.loggedIn" ng-show="!main.register" class="form-inline">
+<form ng-hide="loggedIn" class="form-inline">
     <div class="form-group">
         <label class="sr-only">Email address</label>
-        <input ng-model="main.email" type="email" class="form-control" placeholder="Email">
+        <input ng-model="main.googleID" type="email" class="form-control" placeholder="Email">
     </div>
     <br>
     <div class="form-group">
@@ -36,7 +36,7 @@
         <input ng-model="main.password" type="password" class="form-control" placeholder="Password">
     </div>
     <br>
-    <div ng-show="main.loginFailed">
+    <div ng-show="loginFailed">
         The email and password do not match
     </div>
     <input type="submit" class="btn btn-default" value="Sign In" ng-click="main.checkLogin()">
@@ -62,7 +62,7 @@
     <button type="button" class="btn btn-default" ng-click="main.cancelAccountCreate()">Back</button>
     <input type="submit" class="btn btn-default">
 </form>
-<div class="col-md-5" ng-show="main.loggedIn">
+<div class="col-md-5" ng-show="loggedIn">
     <textarea class="form-control" rows="4">
     </textarea>
     <br>
